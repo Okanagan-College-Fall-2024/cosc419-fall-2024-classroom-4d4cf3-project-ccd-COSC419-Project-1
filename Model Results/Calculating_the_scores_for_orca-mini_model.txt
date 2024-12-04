@@ -1,0 +1,5 @@
+Calculating the scores for orca-mini model
+
+F1 score: 0.6211453744493393
+Precision: 0.5117967332123412
+Recall: 0.7899159663865546

@@ -1,0 +1,5 @@
+Calculating the scores for phi-3 model
+
+F1 score: 0.41901408450704225
+Precision: 0.5833333333333334
+Recall: 0.3269230769230769

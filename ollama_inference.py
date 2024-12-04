@@ -14,7 +14,7 @@ current_location = pathlib.Path(__file__).parent.resolve()
 
 
 class OllamaInference(ModelInterface):
-    def __init__(self,  model='phi3', stream=False):
+    def __init__(self,  model='llama3.2', stream=False):
         self.model = model
         self.stream = stream
         self.results = []

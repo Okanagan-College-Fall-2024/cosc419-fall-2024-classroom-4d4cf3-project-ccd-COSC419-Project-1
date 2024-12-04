@@ -45,11 +45,11 @@ class Analyser:
                 else:
                     correct_ids.append(sample_key)
                     
-        with open(os.path.join(current_location, 'results', f'{type}_missing_index.txt'), "w") as file:
+        with open(os.path.join(current_location, 'model_result', f'{type}_missing_index.txt'), "w") as file:
             for id in missing_ids:
                 file.write(f"{id}\n")
                 
-        with open(os.path.join(current_location, 'results', f'{type}_correct_index.txt'), "w") as file:
+        with open(os.path.join(current_location, 'model_result', f'{type}_correct_index.txt'), "w") as file:
             for id in correct_ids:
                 file.write(f"{id}\n")
                 
@@ -79,11 +79,15 @@ class Analyser:
         """
         pure_results = self._read_lines(self.report_file)
         result = {}
+        print(len(pure_results))
         for data in pure_results:
             try:
                 data_id = int(re.search(r"Data Id (\d+):", data).group(1))
+
             except:
                 assert 1 == 1
+                continue
+
             
             data_value = None
                 
@@ -95,7 +99,7 @@ class Analyser:
                 assert 1 == 1
             
             result[data_id] = data_value
-            
+        print(f"The lenght of the result {len(result)}")    
         return result
 
     def _read_lines(self, file_path):
@@ -140,18 +144,24 @@ class Analyser:
                 unprocessed_samples = unprocessed_samples + 1
                      
         self.precision = precision_score(ground_truth_labels, predictions_labels)
+        
+
         self.recall = recall_score(ground_truth_labels, predictions_labels)
         self.f1_score = f1_score(ground_truth_labels, predictions_labels) 
+        print(f"The f1 score  is {self.f1_score}")
+        print("checking descriptioin")
+        print(description)
         if save_to_file:
             self.write_results_to_file(description)
             
     def write_results_to_file(self, description):
         file_description_text = f"{description}\n\n"
         file_description_text = file_description_text + f"F1 score: {self.f1_score}\n"
+
         file_description_text = file_description_text + f"Precision: {self.precision}\n"
         file_description_text = file_description_text + f"Recall: {self.recall}\n"
         file_name = '_'.join(description.split(" "))+'.txt'
-        with open(os.path.join(current_location, 'results', file_name), "w") as file:
+        with open(os.path.join(current_location, 'model_result', file_name), "w") as file:
             file.write(file_description_text)
         
         
@@ -179,16 +189,16 @@ class Analyser:
 
 if __name__ == '__main__':
     analyser = Analyser(
-        os.path.join(current_location, 'java_test_clone_2.jsonl'),
-        os.path.join(current_location, 'results', 'results_for_java2.txt')
+        os.path.join(current_location, 'java_test_clone.jsonl'),
+        os.path.join(current_location, 'model_result', 'llama3.2_results.txt')
     )
-    analyser.compute_metrics()
+    analyser.compute_metrics(description="Calculating the scores for llama-3.2 model", save_to_file=True)
     analyser.compute_missing_samples(type='java_java')
     
-    analyser2 = Analyser(
-        os.path.join(current_location, 'ruby_java_test_clone2.jsonl'),
-        os.path.join(current_location, 'results', 'results_for_java_ruby2.txt')
-    )
-    analyser2.compute_metrics()
-    analyser2.compute_missing_samples(type='java_ruby')
+    # analyser2 = Analyser(
+    #     os.path.join(current_location, 'ruby_java_test_clone2.jsonl'),
+    #     os.path.join(current_location, 'results', 'results_for_java_ruby2.txt')
+    # )
+    # analyser2.compute_metrics()
+    # analyser2.compute_missing_samples(type='java_ruby')
     assert analyser.predicted_results is not None
